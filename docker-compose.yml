@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # ──────────────────────────────────────────────
+  # PostgreSQL – auth-service & order-service
+  # ──────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: sigepid-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sigepid
+      POSTGRES_PASSWORD: sigepid_secret
+      POSTGRES_DB: sigepid_auth
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
+  # ──────────────────────────────────────────────
+  # MongoDB – catalog-service
+  # ──────────────────────────────────────────────
+  mongodb:
+    image: mongo:7
+    container_name: sigepid-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: sigepid
+      MONGO_INITDB_ROOT_PASSWORD: sigepid_secret
+      MONGO_INITDB_DATABASE: sigepid_catalog
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  postgres_data:
+  mongo_data:
