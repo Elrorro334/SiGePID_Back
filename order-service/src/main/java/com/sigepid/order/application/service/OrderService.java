@@ -5,21 +5,27 @@ import com.sigepid.order.domain.entity.Order;
 import com.sigepid.order.domain.entity.OrderItem;
 import com.sigepid.order.domain.enums.OrderStatus;
 import com.sigepid.order.domain.repository.OrderRepository;
+import com.sigepid.order.infrastructure.client.CatalogClient;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final CatalogClient catalogClient;
 
     public OrderResponse createOrder(OrderRequest request) {
         Order order = Order.builder()
@@ -50,6 +56,23 @@ public class OrderService {
                 .map(OrderItem::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         order.setTotalAmount(totalAmount);
+
+        // Reduce stock in catalog-service
+        try {
+            List<Map<String, Object>> stockRequests = request.getItems().stream()
+                    .map(itemReq -> {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("productId", itemReq.getProductId());
+                        map.put("quantity", itemReq.getQuantity());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+            catalogClient.reduceStock(stockRequests);
+            log.info("Stock reduced successfully for order with {} items", stockRequests.size());
+        } catch (Exception e) {
+            log.error("Failed to reduce stock in catalog-service: {}", e.getMessage());
+            throw new RuntimeException("Could not reduce stock: " + e.getMessage(), e);
+        }
 
         Order savedOrder = orderRepository.save(order);
         return mapToResponse(savedOrder);

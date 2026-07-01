@@ -141,6 +141,25 @@ public class CatalogService {
     }
 
     // ========================
+    // Stock Operations
+    // ========================
+
+    public ProductResponse reduceStock(String productId, Integer quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+
+        if (product.getStock() < quantity) {
+            throw new RuntimeException("Insufficient stock for product: " + product.getName()
+                    + ". Available: " + product.getStock() + ", Requested: " + quantity);
+        }
+
+        product.setStock(product.getStock() - quantity);
+        product.setUpdatedAt(LocalDateTime.now());
+        Product saved = productRepository.save(product);
+        return toProductResponse(saved);
+    }
+
+    // ========================
     // Mapping Methods
     // ========================
 
