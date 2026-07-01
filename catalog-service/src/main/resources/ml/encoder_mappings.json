@@ -1,0 +1,73 @@
+{
+  "encoders": {
+    "categoria": {
+      "Deportes": 0,
+      "Electrónica": 1,
+      "Hogar": 2,
+      "Juguetes": 3,
+      "Ropa": 4
+    },
+    "rango_edad": {
+      "Adolescentes (13-17)": 0,
+      "Adultos (36-55)": 1,
+      "Adultos Jóvenes (18-35)": 2,
+      "Adultos Mayores (55+)": 3,
+      "Niños (0-12)": 4
+    },
+    "uso_previsto": {
+      "Entretenimiento": 0,
+      "Regalo": 1,
+      "Trabajo": 2,
+      "Uso Personal": 3
+    },
+    "producto": {
+      "0": "Aspiradora Robot",
+      "1": "Auriculares Inalámbricos",
+      "2": "Balón de Fútbol",
+      "3": "Bicicleta de Montaña",
+      "4": "Cafetera Automática",
+      "5": "Camisa de Algodón",
+      "6": "Chaqueta de Cuero",
+      "7": "Coche a Control Remoto",
+      "8": "Esterilla de Yoga",
+      "9": "Juego de Mesa Estratégico",
+      "10": "Laptop",
+      "11": "Lámpara de Escritorio",
+      "12": "Manta Térmica",
+      "13": "Muñeca Articulada",
+      "14": "Pantalón de Mezclilla",
+      "15": "Raqueta de Tenis",
+      "16": "Rompecabezas 1000 piezas",
+      "17": "Set de Construcción Lego",
+      "18": "Set de Pesas",
+      "19": "Set de Sartenes",
+      "20": "Smartphone",
+      "21": "Smartwatch",
+      "22": "Tablet",
+      "23": "Vestido de Noche",
+      "24": "Zapatillas Deportivas"
+    }
+  },
+  "options": {
+    "categorias": [
+      "Deportes",
+      "Electrónica",
+      "Hogar",
+      "Juguetes",
+      "Ropa"
+    ],
+    "rangosEdad": [
+      "Adolescentes (13-17)",
+      "Adultos (36-55)",
+      "Adultos Jóvenes (18-35)",
+      "Adultos Mayores (55+)",
+      "Niños (0-12)"
+    ],
+    "usosPrevisto": [
+      "Entretenimiento",
+      "Regalo",
+      "Trabajo",
+      "Uso Personal"
+    ]
+  }
+}

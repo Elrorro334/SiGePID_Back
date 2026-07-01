@@ -1,0 +1,202 @@
+{
+  "Aspiradora Robot": {
+    "precioPromedio": 7481.92,
+    "precioMin": 3043.49,
+    "precioMax": 11851.08,
+    "stockPromedio": 102,
+    "categoriaPredominante": "Hogar",
+    "descripcion": "Excelente opción de la categoría hogar, ideal para tus necesidades."
+  },
+  "Auriculares Inalámbricos": {
+    "precioPromedio": 1725.6,
+    "precioMin": 367.57,
+    "precioMax": 2998.91,
+    "stockPromedio": 99,
+    "categoriaPredominante": "Electrónica",
+    "descripcion": "Excelente opción de la categoría electrónica, ideal para tus necesidades."
+  },
+  "Balón de Fútbol": {
+    "precioPromedio": 577.34,
+    "precioMin": 204.15,
+    "precioMax": 997.74,
+    "stockPromedio": 115,
+    "categoriaPredominante": "Deportes",
+    "descripcion": "Excelente opción de la categoría deportes, ideal para tus necesidades."
+  },
+  "Bicicleta de Montaña": {
+    "precioPromedio": 9265.0,
+    "precioMin": 3346.43,
+    "precioMax": 14710.24,
+    "stockPromedio": 108,
+    "categoriaPredominante": "Deportes",
+    "descripcion": "Excelente opción de la categoría deportes, ideal para tus necesidades."
+  },
+  "Cafetera Automática": {
+    "precioPromedio": 1829.9,
+    "precioMin": 556.87,
+    "precioMax": 2976.54,
+    "stockPromedio": 99,
+    "categoriaPredominante": "Hogar",
+    "descripcion": "Excelente opción de la categoría hogar, ideal para tus necesidades."
+  },
+  "Camisa de Algodón": {
+    "precioPromedio": 525.73,
+    "precioMin": 205.48,
+    "precioMax": 795.71,
+    "stockPromedio": 109,
+    "categoriaPredominante": "Ropa",
+    "descripcion": "Excelente opción de la categoría ropa, ideal para tus necesidades."
+  },
+  "Chaqueta de Cuero": {
+    "precioPromedio": 3455.01,
+    "precioMin": 1558.41,
+    "precioMax": 4983.02,
+    "stockPromedio": 112,
+    "categoriaPredominante": "Ropa",
+    "descripcion": "Excelente opción de la categoría ropa, ideal para tus necesidades."
+  },
+  "Coche a Control Remoto": {
+    "precioPromedio": 1175.62,
+    "precioMin": 535.29,
+    "precioMax": 1988.8,
+    "stockPromedio": 111,
+    "categoriaPredominante": "Juguetes",
+    "descripcion": "Excelente opción de la categoría juguetes, ideal para tus necesidades."
+  },
+  "Esterilla de Yoga": {
+    "precioPromedio": 460.32,
+    "precioMin": 202.47,
+    "precioMax": 794.14,
+    "stockPromedio": 97,
+    "categoriaPredominante": "Deportes",
+    "descripcion": "Excelente opción de la categoría deportes, ideal para tus necesidades."
+  },
+  "Juego de Mesa Estratégico": {
+    "precioPromedio": 671.18,
+    "precioMin": 204.34,
+    "precioMax": 1196.63,
+    "stockPromedio": 107,
+    "categoriaPredominante": "Juguetes",
+    "descripcion": "Excelente opción de la categoría juguetes, ideal para tus necesidades."
+  },
+  "Laptop": {
+    "precioPromedio": 16962.29,
+    "precioMin": 8137.67,
+    "precioMax": 24790.08,
+    "stockPromedio": 108,
+    "categoriaPredominante": "Electrónica",
+    "descripcion": "Excelente opción de la categoría electrónica, ideal para tus necesidades."
+  },
+  "Lámpara de Escritorio": {
+    "precioPromedio": 657.18,
+    "precioMin": 206.11,
+    "precioMax": 1192.69,
+    "stockPromedio": 106,
+    "categoriaPredominante": "Hogar",
+    "descripcion": "Excelente opción de la categoría hogar, ideal para tus necesidades."
+  },
+  "Manta Térmica": {
+    "precioPromedio": 853.76,
+    "precioMin": 315.56,
+    "precioMax": 1443.1,
+    "stockPromedio": 108,
+    "categoriaPredominante": "Hogar",
+    "descripcion": "Excelente opción de la categoría hogar, ideal para tus necesidades."
+  },
+  "Muñeca Articulada": {
+    "precioPromedio": 580.92,
+    "precioMin": 365.22,
+    "precioMax": 787.33,
+    "stockPromedio": 94,
+    "categoriaPredominante": "Juguetes",
+    "descripcion": "Excelente opción de la categoría juguetes, ideal para tus necesidades."
+  },
+  "Pantalón de Mezclilla": {
+    "precioPromedio": 950.52,
+    "precioMin": 401.74,
+    "precioMax": 1473.83,
+    "stockPromedio": 93,
+    "categoriaPredominante": "Ropa",
+    "descripcion": "Excelente opción de la categoría ropa, ideal para tus necesidades."
+  },
+  "Raqueta de Tenis": {
+    "precioPromedio": 1743.93,
+    "precioMin": 511.67,
+    "precioMax": 2993.16,
+    "stockPromedio": 113,
+    "categoriaPredominante": "Deportes",
+    "descripcion": "Excelente opción de la categoría deportes, ideal para tus necesidades."
+  },
+  "Rompecabezas 1000 piezas": {
+    "precioPromedio": 294.05,
+    "precioMin": 106.25,
+    "precioMax": 499.83,
+    "stockPromedio": 105,
+    "categoriaPredominante": "Juguetes",
+    "descripcion": "Excelente opción de la categoría juguetes, ideal para tus necesidades."
+  },
+  "Set de Construcción Lego": {
+    "precioPromedio": 1498.94,
+    "precioMin": 411.6,
+    "precioMax": 2471.14,
+    "stockPromedio": 116,
+    "categoriaPredominante": "Juguetes",
+    "descripcion": "Excelente opción de la categoría juguetes, ideal para tus necesidades."
+  },
+  "Set de Pesas": {
+    "precioPromedio": 1757.95,
+    "precioMin": 513.67,
+    "precioMax": 2934.31,
+    "stockPromedio": 102,
+    "categoriaPredominante": "Deportes",
+    "descripcion": "Excelente opción de la categoría deportes, ideal para tus necesidades."
+  },
+  "Set de Sartenes": {
+    "precioPromedio": 1246.79,
+    "precioMin": 552.0,
+    "precioMax": 1910.62,
+    "stockPromedio": 133,
+    "categoriaPredominante": "Hogar",
+    "descripcion": "Excelente opción de la categoría hogar, ideal para tus necesidades."
+  },
+  "Smartphone": {
+    "precioPromedio": 9018.06,
+    "precioMin": 3538.03,
+    "precioMax": 14912.0,
+    "stockPromedio": 107,
+    "categoriaPredominante": "Electrónica",
+    "descripcion": "Excelente opción de la categoría electrónica, ideal para tus necesidades."
+  },
+  "Smartwatch": {
+    "precioPromedio": 4801.88,
+    "precioMin": 1599.76,
+    "precioMax": 7856.9,
+    "stockPromedio": 102,
+    "categoriaPredominante": "Electrónica",
+    "descripcion": "Excelente opción de la categoría electrónica, ideal para tus necesidades."
+  },
+  "Tablet": {
+    "precioPromedio": 7417.77,
+    "precioMin": 2740.09,
+    "precioMax": 11999.12,
+    "stockPromedio": 101,
+    "categoriaPredominante": "Electrónica",
+    "descripcion": "Excelente opción de la categoría electrónica, ideal para tus necesidades."
+  },
+  "Vestido de Noche": {
+    "precioPromedio": 2406.96,
+    "precioMin": 952.8,
+    "precioMax": 3919.92,
+    "stockPromedio": 87,
+    "categoriaPredominante": "Ropa",
+    "descripcion": "Excelente opción de la categoría ropa, ideal para tus necesidades."
+  },
+  "Zapatillas Deportivas": {
+    "precioPromedio": 1815.01,
+    "precioMin": 772.19,
+    "precioMax": 2993.93,
+    "stockPromedio": 102,
+    "categoriaPredominante": "Ropa",
+    "descripcion": "Excelente opción de la categoría ropa, ideal para tus necesidades."
+  }
+}

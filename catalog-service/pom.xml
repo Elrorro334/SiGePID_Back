@@ -53,6 +53,13 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- ONNX Runtime - ML Inference -->
+        <dependency>
+            <groupId>com.microsoft.onnxruntime</groupId>
+            <artifactId>onnxruntime</artifactId>
+            <version>1.22.0</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

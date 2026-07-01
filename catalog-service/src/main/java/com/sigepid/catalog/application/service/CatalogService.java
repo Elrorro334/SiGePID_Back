@@ -157,6 +157,12 @@ public class CatalogService {
     }
 
     private ProductResponse toProductResponse(Product product) {
+        String categoryName = null;
+        if (product.getCategoryId() != null) {
+            categoryName = categoryRepository.findById(product.getCategoryId())
+                    .map(Category::getName)
+                    .orElse(null);
+        }
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -165,6 +171,7 @@ public class CatalogService {
                 .price(product.getPrice())
                 .stock(product.getStock())
                 .categoryId(product.getCategoryId())
+                .categoryName(categoryName)
                 .active(product.getActive())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())

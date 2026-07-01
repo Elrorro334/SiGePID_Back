@@ -33,7 +33,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
      * Paths that do not require JWT authentication.
      */
     private static final List<String> OPEN_ENDPOINTS = List.of(
-            "/api/auth/"
+            "/api/auth/",
+            "/api/catalog/"
     );
 
     @Value("${jwt.secret}")
