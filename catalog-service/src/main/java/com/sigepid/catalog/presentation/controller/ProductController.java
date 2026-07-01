@@ -2,6 +2,7 @@ package com.sigepid.catalog.presentation.controller;
 
 import com.sigepid.catalog.application.dto.ProductRequest;
 import com.sigepid.catalog.application.dto.ProductResponse;
+import com.sigepid.catalog.application.dto.StockRequest;
 import com.sigepid.catalog.application.service.CatalogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -64,5 +65,14 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
         catalogService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/reduce-stock")
+    public ResponseEntity<List<ProductResponse>> reduceStock(
+            @Valid @RequestBody List<StockRequest> stockRequests) {
+        List<ProductResponse> updatedProducts = stockRequests.stream()
+                .map(req -> catalogService.reduceStock(req.getProductId(), req.getQuantity()))
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(updatedProducts);
     }
 }
