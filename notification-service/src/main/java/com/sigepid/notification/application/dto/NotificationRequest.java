@@ -17,6 +17,8 @@ public class NotificationRequest {
     @NotBlank(message = "User ID is required")
     private String userId;
 
+    private String userEmail;
+
     @NotBlank(message = "Title is required")
     private String title;
 

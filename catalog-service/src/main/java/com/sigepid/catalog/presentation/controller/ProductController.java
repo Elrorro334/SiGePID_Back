@@ -75,4 +75,13 @@ public class ProductController {
                 .collect(java.util.stream.Collectors.toList());
         return ResponseEntity.ok(updatedProducts);
     }
+
+    @PutMapping("/restore-stock")
+    public ResponseEntity<List<ProductResponse>> restoreStock(
+            @Valid @RequestBody List<StockRequest> stockRequests) {
+        List<ProductResponse> updatedProducts = stockRequests.stream()
+                .map(req -> catalogService.restoreStock(req.getProductId(), req.getQuantity()))
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(updatedProducts);
+    }
 }

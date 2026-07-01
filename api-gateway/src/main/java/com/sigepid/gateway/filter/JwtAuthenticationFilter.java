@@ -29,13 +29,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
-    /**
-     * Paths that do not require JWT authentication.
-     */
-    private static final List<String> OPEN_ENDPOINTS = List.of(
-            "/api/auth/",
-            "/api/catalog/"
-    );
+    // Removed static OPEN_ENDPOINTS list, logic moved to isOpenEndpoint
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -46,7 +40,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         String path = request.getURI().getPath();
 
         // Skip authentication for open endpoints
-        if (isOpenEndpoint(path)) {
+        if (isOpenEndpoint(request)) {
             return chain.filter(exchange);
         }
 
@@ -65,7 +59,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
             // Forward user information in headers to downstream services
             ServerHttpRequest modifiedRequest = request.mutate()
-                    .header("X-User-Id", claims.getSubject())
+                    .header("X-User-Id", claims.get("userId") != null ? claims.get("userId").toString() : "")
+                    .header("X-User-Username", claims.getSubject())
                     .header("X-User-Roles", claims.get("roles", String.class) != null
                             ? claims.get("roles", String.class) : "")
                     .build();
@@ -77,8 +72,19 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         }
     }
 
-    private boolean isOpenEndpoint(String path) {
-        return OPEN_ENDPOINTS.stream().anyMatch(path::startsWith);
+    private boolean isOpenEndpoint(ServerHttpRequest request) {
+        String path = request.getURI().getPath();
+        String method = request.getMethod().name();
+
+        if (path.startsWith("/api/auth/") && !path.equals("/api/auth/profile")) {
+            return true;
+        }
+        
+        if (path.startsWith("/api/catalog/") && method.equals("GET")) {
+            return true;
+        }
+
+        return false;
     }
 
     private Claims validateToken(String token) {

@@ -35,6 +35,8 @@ public class ProductRequest {
 
     private String categoryId;
 
+    private String imageUrl;
+
     @Builder.Default
     private Boolean active = true;
 }

@@ -39,7 +39,7 @@ public class AuthService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole() != null ? request.getRole() : Role.USER)
+                .role(Role.USER) // Enforce USER role for new registrations
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -50,6 +50,7 @@ public class AuthService {
                 .token(token)
                 .username(savedUser.getUsername())
                 .role(savedUser.getRole())
+                .userId(savedUser.getId())
                 .build();
     }
 
@@ -71,6 +72,19 @@ public class AuthService {
         return AuthResponse.builder()
                 .token(token)
                 .username(user.getUsername())
+                .role(user.getRole())
+                .userId(user.getId())
+                .build();
+    }
+
+    public com.sigepid.auth.application.dto.AuthProfileResponse getProfile(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        return com.sigepid.auth.application.dto.AuthProfileResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
                 .role(user.getRole())
                 .build();
     }

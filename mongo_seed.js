@@ -49,7 +49,7 @@ const productsResult = db.products.insertMany([
         sku: "ELEC-SMART-001",
         price: NumberDecimal("9250.00"),
         stock: 85,
-        categoryId: CAT.electronica,
+        categoryId: CAT.electronica, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -58,7 +58,7 @@ const productsResult = db.products.insertMany([
         sku: "ELEC-LAPT-002",
         price: NumberDecimal("16500.00"),
         stock: 42,
-        categoryId: CAT.electronica,
+        categoryId: CAT.electronica, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -67,7 +67,7 @@ const productsResult = db.products.insertMany([
         sku: "ELEC-TABL-003",
         price: NumberDecimal("7250.00"),
         stock: 60,
-        categoryId: CAT.electronica,
+        categoryId: CAT.electronica, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -76,7 +76,7 @@ const productsResult = db.products.insertMany([
         sku: "ELEC-AURI-004",
         price: NumberDecimal("1650.00"),
         stock: 110,
-        categoryId: CAT.electronica,
+        categoryId: CAT.electronica, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -85,7 +85,7 @@ const productsResult = db.products.insertMany([
         sku: "ELEC-WATC-005",
         price: NumberDecimal("4750.00"),
         stock: 55,
-        categoryId: CAT.electronica,
+        categoryId: CAT.electronica, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
 
@@ -96,7 +96,7 @@ const productsResult = db.products.insertMany([
         sku: "ROPA-CAMI-001",
         price: NumberDecimal("500.00"),
         stock: 200,
-        categoryId: CAT.ropa,
+        categoryId: CAT.ropa, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -105,7 +105,7 @@ const productsResult = db.products.insertMany([
         sku: "ROPA-PANT-002",
         price: NumberDecimal("950.00"),
         stock: 150,
-        categoryId: CAT.ropa,
+        categoryId: CAT.ropa, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -114,7 +114,7 @@ const productsResult = db.products.insertMany([
         sku: "ROPA-ZAPA-003",
         price: NumberDecimal("1800.00"),
         stock: 90,
-        categoryId: CAT.ropa,
+        categoryId: CAT.ropa, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -123,7 +123,7 @@ const productsResult = db.products.insertMany([
         sku: "ROPA-CHAQ-004",
         price: NumberDecimal("3250.00"),
         stock: 35,
-        categoryId: CAT.ropa,
+        categoryId: CAT.ropa, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -132,7 +132,7 @@ const productsResult = db.products.insertMany([
         sku: "ROPA-VEST-005",
         price: NumberDecimal("2400.00"),
         stock: 40,
-        categoryId: CAT.ropa,
+        categoryId: CAT.ropa, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
 
@@ -143,7 +143,7 @@ const productsResult = db.products.insertMany([
         sku: "HOGA-LAMP-001",
         price: NumberDecimal("700.00"),
         stock: 75,
-        categoryId: CAT.hogar,
+        categoryId: CAT.hogar, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -152,7 +152,7 @@ const productsResult = db.products.insertMany([
         sku: "HOGA-CAFE-002",
         price: NumberDecimal("1750.00"),
         stock: 48,
-        categoryId: CAT.hogar,
+        categoryId: CAT.hogar, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -161,7 +161,7 @@ const productsResult = db.products.insertMany([
         sku: "HOGA-ASPI-003",
         price: NumberDecimal("7500.00"),
         stock: 22,
-        categoryId: CAT.hogar,
+        categoryId: CAT.hogar, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -170,7 +170,7 @@ const productsResult = db.products.insertMany([
         sku: "HOGA-SART-004",
         price: NumberDecimal("1200.00"),
         stock: 65,
-        categoryId: CAT.hogar,
+        categoryId: CAT.hogar, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -179,7 +179,7 @@ const productsResult = db.products.insertMany([
         sku: "HOGA-MANT-005",
         price: NumberDecimal("900.00"),
         stock: 80,
-        categoryId: CAT.hogar,
+        categoryId: CAT.hogar, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
 
@@ -190,7 +190,7 @@ const productsResult = db.products.insertMany([
         sku: "DEPO-BICI-001",
         price: NumberDecimal("9000.00"),
         stock: 18,
-        categoryId: CAT.deportes,
+        categoryId: CAT.deportes, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -199,7 +199,7 @@ const productsResult = db.products.insertMany([
         sku: "DEPO-PESA-002",
         price: NumberDecimal("1750.00"),
         stock: 55,
-        categoryId: CAT.deportes,
+        categoryId: CAT.deportes, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -208,7 +208,7 @@ const productsResult = db.products.insertMany([
         sku: "DEPO-BALO-003",
         price: NumberDecimal("600.00"),
         stock: 120,
-        categoryId: CAT.deportes,
+        categoryId: CAT.deportes, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -217,7 +217,7 @@ const productsResult = db.products.insertMany([
         sku: "DEPO-RAQU-004",
         price: NumberDecimal("1750.00"),
         stock: 40,
-        categoryId: CAT.deportes,
+        categoryId: CAT.deportes, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -226,7 +226,7 @@ const productsResult = db.products.insertMany([
         sku: "DEPO-ESTE-005",
         price: NumberDecimal("500.00"),
         stock: 95,
-        categoryId: CAT.deportes,
+        categoryId: CAT.deportes, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
 
@@ -237,7 +237,7 @@ const productsResult = db.products.insertMany([
         sku: "JUGT-LEGO-001",
         price: NumberDecimal("1400.00"),
         stock: 70,
-        categoryId: CAT.juguetes,
+        categoryId: CAT.juguetes, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -246,7 +246,7 @@ const productsResult = db.products.insertMany([
         sku: "JUGT-MUNE-002",
         price: NumberDecimal("475.00"),
         stock: 85,
-        categoryId: CAT.juguetes,
+        categoryId: CAT.juguetes, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -255,7 +255,7 @@ const productsResult = db.products.insertMany([
         sku: "JUGT-ROMP-003",
         price: NumberDecimal("300.00"),
         stock: 100,
-        categoryId: CAT.juguetes,
+        categoryId: CAT.juguetes, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -264,7 +264,7 @@ const productsResult = db.products.insertMany([
         sku: "JUGT-COCH-004",
         price: NumberDecimal("1150.00"),
         stock: 55,
-        categoryId: CAT.juguetes,
+        categoryId: CAT.juguetes, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     },
     {
@@ -273,7 +273,7 @@ const productsResult = db.products.insertMany([
         sku: "JUGT-MESA-005",
         price: NumberDecimal("700.00"),
         stock: 60,
-        categoryId: CAT.juguetes,
+        categoryId: CAT.juguetes, imageUrl: "https://picsum.photos/seed/sigepid/400/400",
         active: true, createdAt: now, updatedAt: now
     }
 ]);
@@ -296,3 +296,4 @@ print("\n  Distribución por categoría:");
         print(`    ${cat}: ${count} productos`);
     }
 });
+

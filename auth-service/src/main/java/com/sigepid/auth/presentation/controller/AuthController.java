@@ -31,4 +31,14 @@ public class AuthController {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }
+
+    @org.springframework.web.bind.annotation.GetMapping("/profile")
+    public ResponseEntity<com.sigepid.auth.application.dto.AuthProfileResponse> getProfile(
+            @org.springframework.web.bind.annotation.RequestHeader("X-User-Id") String userIdHeader) {
+        if (userIdHeader == null || userIdHeader.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        com.sigepid.auth.application.dto.AuthProfileResponse profile = authService.getProfile(Long.parseLong(userIdHeader));
+        return ResponseEntity.ok(profile);
+    }
 }

@@ -84,6 +84,7 @@ public class CatalogService {
         existing.setPrice(request.getPrice());
         existing.setStock(request.getStock());
         existing.setCategoryId(request.getCategoryId());
+        existing.setImageUrl(request.getImageUrl());
         existing.setActive(request.getActive());
         existing.setUpdatedAt(LocalDateTime.now());
 
@@ -159,6 +160,16 @@ public class CatalogService {
         return toProductResponse(saved);
     }
 
+    public ProductResponse restoreStock(String productId, Integer quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+
+        product.setStock(product.getStock() + quantity);
+        product.setUpdatedAt(LocalDateTime.now());
+        Product saved = productRepository.save(product);
+        return toProductResponse(saved);
+    }
+
     // ========================
     // Mapping Methods
     // ========================
@@ -171,6 +182,7 @@ public class CatalogService {
                 .price(request.getPrice())
                 .stock(request.getStock())
                 .categoryId(request.getCategoryId())
+                .imageUrl(request.getImageUrl())
                 .active(request.getActive())
                 .build();
     }
@@ -191,6 +203,7 @@ public class CatalogService {
                 .stock(product.getStock())
                 .categoryId(product.getCategoryId())
                 .categoryName(categoryName)
+                .imageUrl(product.getImageUrl())
                 .active(product.getActive())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())

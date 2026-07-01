@@ -20,7 +20,14 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest request) {
+    public ResponseEntity<OrderResponse> createOrder(
+            @Valid @RequestBody OrderRequest request,
+            @RequestHeader(value = "X-User-Id", required = false) String userIdHeader) {
+        
+        if (userIdHeader != null && !userIdHeader.isEmpty()) {
+            request.setUserId(userIdHeader);
+        }
+        
         OrderResponse response = orderService.createOrder(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

@@ -6,6 +6,12 @@ import com.sigepid.notification.domain.entity.Notification;
 import com.sigepid.notification.domain.enums.NotificationType;
 import org.springframework.stereotype.Service;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,9 +21,12 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class NotificationService {
 
+    private final JavaMailSender mailSender;
     private final Map<String, List<Notification>> notificationStore = new ConcurrentHashMap<>();
 
     public NotificationResponse sendNotification(NotificationRequest request) {
@@ -34,6 +43,20 @@ public class NotificationService {
         notificationStore
                 .computeIfAbsent(request.getUserId(), k -> Collections.synchronizedList(new ArrayList<>()))
                 .add(notification);
+
+        if (request.getUserEmail() != null && !request.getUserEmail().isEmpty()) {
+            try {
+                SimpleMailMessage mailMessage = new SimpleMailMessage();
+                mailMessage.setFrom("noreply@sigepid.com");
+                mailMessage.setTo(request.getUserEmail());
+                mailMessage.setSubject("SiGePID: " + request.getTitle());
+                mailMessage.setText(request.getMessage());
+                mailSender.send(mailMessage);
+                log.info("Email sent to {}", request.getUserEmail());
+            } catch (Exception e) {
+                log.error("Failed to send email to {}: {}", request.getUserEmail(), e.getMessage());
+            }
+        }
 
         return mapToResponse(notification);
     }

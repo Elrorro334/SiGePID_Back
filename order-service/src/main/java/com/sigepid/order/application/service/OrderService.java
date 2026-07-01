@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.sigepid.order.infrastructure.client.NotificationClient;
+
 @Slf4j
 @Service
 @Transactional
@@ -26,6 +28,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final CatalogClient catalogClient;
+    private final NotificationClient notificationClient;
 
     public OrderResponse createOrder(OrderRequest request) {
         Order order = Order.builder()
@@ -75,6 +78,21 @@ public class OrderService {
         }
 
         Order savedOrder = orderRepository.save(order);
+
+        // Send notification
+        try {
+            Map<String, Object> notifRequest = new HashMap<>();
+            notifRequest.put("userId", savedOrder.getUserId());
+            notifRequest.put("userEmail", request.getUserEmail());
+            notifRequest.put("title", "Pedido Creado");
+            notifRequest.put("message", "Su pedido ORD-" + savedOrder.getId() + " ha sido creado exitosamente por un total de $" + savedOrder.getTotalAmount());
+            notifRequest.put("type", "INFO");
+            notificationClient.sendNotification(notifRequest);
+            log.info("Notification sent for order {}", savedOrder.getId());
+        } catch (Exception e) {
+            log.error("Failed to send notification for order {}: {}", savedOrder.getId(), e.getMessage());
+        }
+
         return mapToResponse(savedOrder);
     }
 
@@ -108,6 +126,23 @@ public class OrderService {
         }
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
+
+        // Restore stock in catalog-service
+        try {
+            List<Map<String, Object>> stockRequests = order.getItems().stream()
+                    .map(item -> {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("productId", item.getProductId());
+                        map.put("quantity", item.getQuantity());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+            catalogClient.restoreStock(stockRequests);
+            log.info("Stock restored successfully for cancelled order with {} items", stockRequests.size());
+        } catch (Exception e) {
+            log.error("Failed to restore stock in catalog-service for cancelled order: {}", e.getMessage());
+            // Depending on business requirements, this might throw an exception or just log the error.
+        }
     }
 
     @Transactional(readOnly = true)

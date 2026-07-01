@@ -19,6 +19,8 @@ public class OrderRequest {
     @NotBlank(message = "User ID is required")
     private String userId;
 
+    private String userEmail;
+
     @NotBlank(message = "Shipping address is required")
     private String shippingAddress;
 

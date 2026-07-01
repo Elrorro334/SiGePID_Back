@@ -34,6 +34,8 @@ public class Product {
 
     private String categoryId;
 
+    private String imageUrl;
+
     private Boolean active;
 
     private LocalDateTime createdAt;

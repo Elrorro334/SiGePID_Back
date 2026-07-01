@@ -12,4 +12,7 @@ public interface CatalogClient {
 
     @PutMapping("/api/catalog/products/reduce-stock")
     List<Map<String, Object>> reduceStock(@RequestBody List<Map<String, Object>> stockRequests);
+
+    @PutMapping("/api/catalog/products/restore-stock")
+    List<Map<String, Object>> restoreStock(@RequestBody List<Map<String, Object>> stockRequests);
 }
