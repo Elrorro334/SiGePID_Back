@@ -16,16 +16,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+//clase de configuracion de seguridad de Spring Security, se define el filtro de autenticacion JWT y el proveedor de autenticacion
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
+//filtro de autenticacion JWT
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsService userDetailsService;
 
     @Bean
+    //metodo para configurar la seguridad de las peticiones HTTP, se deshabilita CSRF, se establece la politica de creacion de sesiones como stateless, se permite el acceso a las rutas /api/auth/** y /actuator/** sin autenticacion y se requiere autenticacion para cualquier otra ruta
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -44,6 +45,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    //metodo para configurar el proveedor de autenticacion, se establece el servicio de detalles del usuario y el codificador de contraseñas
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
