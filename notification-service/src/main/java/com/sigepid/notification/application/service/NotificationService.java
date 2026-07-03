@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public class NotificationService {
 
     private final JavaMailSender mailSender;
+    private final com.sigepid.notification.infrastructure.client.AuthClient authClient;
     private final Map<String, List<Notification>> notificationStore = new ConcurrentHashMap<>();
 
     /**
@@ -53,17 +54,30 @@ public class NotificationService {
                 .computeIfAbsent(request.getUserId(), k -> Collections.synchronizedList(new ArrayList<>()))
                 .add(notification);
 
-        if (request.getUserEmail() != null && !request.getUserEmail().isEmpty()) {
+        String email = request.getUserEmail();
+        if (email == null || email.isEmpty()) {
+            try {
+                // Feign client is needed here, so AuthClient should be injected.
+                Map<String, Object> profile = authClient.getProfile(request.getUserId());
+                if (profile != null && profile.containsKey("email")) {
+                    email = (String) profile.get("email");
+                }
+            } catch (Exception e) {
+                log.warn("Could not fetch user email for user {}: {}", request.getUserId(), e.getMessage());
+            }
+        }
+
+        if (email != null && !email.isEmpty()) {
             try {
                 SimpleMailMessage mailMessage = new SimpleMailMessage();
                 mailMessage.setFrom("sanxcruro122@gmail.com");
-                mailMessage.setTo(request.getUserEmail());
+                mailMessage.setTo(email);
                 mailMessage.setSubject("SiGePID: " + request.getTitle());
                 mailMessage.setText(request.getMessage());
                 mailSender.send(mailMessage);
-                log.info("Email sent to {}", request.getUserEmail());
+                log.info("Email sent to {}", email);
             } catch (Exception e) {
-                log.error("Failed to send email to {}: {}", request.getUserEmail(), e.getMessage());
+                log.error("Failed to send email to {}: {}", email, e.getMessage());
             }
         }
 

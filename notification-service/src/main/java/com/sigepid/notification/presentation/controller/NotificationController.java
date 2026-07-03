@@ -34,18 +34,7 @@ public class NotificationController {
     /** Servicio inyectado por constructor (gracias a @RequiredArgsConstructor de Lombok). */
     private final NotificationService notificationService;
 
-    /**
-     * Crea y envía una nueva notificación.
-     * Valida el cuerpo de la solicitud con las anotaciones de Bean Validation.
-     *
-     * @param request datos de la notificación a crear (validados con @Valid)
-     * @return ResponseEntity con la notificación creada y código HTTP 201 (CREATED)
-     */
-    @PostMapping
-    public ResponseEntity<NotificationResponse> sendNotification(@Valid @RequestBody NotificationRequest request) {
-        NotificationResponse response = notificationService.sendNotification(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+    // El endpoint de creación de notificaciones fue movido a InternalNotificationController
 
     /**
      * Obtiene todas las notificaciones de un usuario específico.
