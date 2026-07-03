@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
+//entidad de usuario, con atributos id, username, email, password, role, createdAt y updatedAt
 @Data
 @Builder
 @NoArgsConstructor

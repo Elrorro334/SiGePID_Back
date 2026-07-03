@@ -13,9 +13,10 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-
+//componente para generar y validar tokens JWT
 @Slf4j
 @Component
+
 public class JwtProvider {
 
     @Value("${jwt.secret}")
@@ -30,7 +31,7 @@ public class JwtProvider {
     public void init() {
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
-
+//metodo para generar un token JWT a partir de un usuario
     public String generateToken(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
@@ -44,7 +45,7 @@ public class JwtProvider {
                 .signWith(key)
                 .compact();
     }
-
+//metodo para obtener el username a partir de un token JWT
     public String getUsernameFromToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(key)
@@ -54,7 +55,7 @@ public class JwtProvider {
 
         return claims.getSubject();
     }
-
+//metodo para validar un token JWT
     public boolean validateToken(String token) {
         try {
             Jwts.parser()

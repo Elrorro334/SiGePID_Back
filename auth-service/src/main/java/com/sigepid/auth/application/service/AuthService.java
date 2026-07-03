@@ -25,6 +25,7 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
 
+    //metodo para registrar un nuevo usuario, se valida que el username y email no existan, se encripta la contraseña y se genera un token JWT
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -53,21 +54,22 @@ public class AuthService {
                 .build();
     }
 
+    //metodo para login de usuario, se autentica y genera un token JWT
     public AuthResponse login(LoginRequest request) {
+//se autentica el usuario con el username y password
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 )
         );
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+//se obtiene el usuario de la base de datos y se genera un token JWT
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found: " + request.getUsername()));
-
+//se genera el token JWT
         String token = jwtProvider.generateToken(user);
-
+//se retorna la respuesta con el token, username y role del usuario
         return AuthResponse.builder()
                 .token(token)
                 .username(user.getUsername())
