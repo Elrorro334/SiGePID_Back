@@ -33,6 +33,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
 
+    // Revisado por Beto - Controlador de pedidos verificado
+
     /** Servicio de pedidos que contiene la lógica de negocio. Se inyecta automáticamente por Spring. */
     private final OrderService orderService;
 
