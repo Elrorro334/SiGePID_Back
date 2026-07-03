@@ -1,9 +1,18 @@
+# ========================
+# Configuración del Microservicio de Notificaciones
+# ========================
+
+# Puerto en el que se ejecuta este microservicio
 server:
   port: 8084
 
 spring:
+  # Nombre del servicio (usado por Eureka para el registro y descubrimiento)
   application:
     name: notification-service
+
+  # Configuración del servidor SMTP para envío de correos electrónicos
+  # Las credenciales se leen de variables de entorno (MAIL_USERNAME, MAIL_PASSWORD)
   mail:
     host: smtp.gmail.com
     port: 587
@@ -12,11 +21,13 @@ spring:
     properties:
       mail:
         smtp:
-          auth: true
+          auth: true            # Habilita autenticación SMTP
           starttls:
-            enable: true
+            enable: true        # Habilita cifrado TLS para conexiones seguras
 
+# Configuración del cliente Eureka para registro y descubrimiento de servicios
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
