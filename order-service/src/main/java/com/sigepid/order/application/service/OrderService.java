@@ -18,16 +18,46 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio principal de la lógica de negocio para la gestión de pedidos.
+ * Contiene las operaciones CRUD y la lógica de negocio asociada (crear pedido,
+ * actualizar estado, cancelar, consultar, etc.).
+ *
+ * @Slf4j             - Genera automáticamente un logger (log) para registrar eventos y errores.
+ * @Service           - Marca esta clase como un componente de servicio de Spring (bean gestionado).
+ * @Transactional     - Todas las operaciones públicas se ejecutan dentro de una transacción de BD.
+ *                      Si ocurre una excepción, se hace rollback automáticamente.
+ * @RequiredArgsConstructor - Genera un constructor con los campos finales (inyección de dependencias).
+ */
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class OrderService {
 
+    /** Repositorio JPA para operaciones de persistencia de pedidos. */
     private final OrderRepository orderRepository;
+
+    /** Cliente Feign para comunicarse con el microservicio de catálogo (reducción de stock). */
     private final CatalogClient catalogClient;
 
+    /**
+     * Crea un nuevo pedido en el sistema.
+     *
+     * Flujo:
+     * 1. Construye la entidad Order con los datos del request (usuario, dirección, estado PENDING).
+     * 2. Mapea cada ítem del request a una entidad OrderItem, calculando el subtotal de cada uno.
+     * 3. Asocia los ítems al pedido y calcula el monto total sumando todos los subtotales.
+     * 4. Llama al catalog-service vía Feign para reducir el stock de los productos.
+     * 5. Guarda el pedido en la base de datos.
+     * 6. Retorna la respuesta mapeada como OrderResponse.
+     *
+     * @param request Datos del pedido a crear (usuario, dirección, lista de ítems).
+     * @return OrderResponse con los datos del pedido creado.
+     * @throws RuntimeException si falla la comunicación con el servicio de catálogo.
+     */
     public OrderResponse createOrder(OrderRequest request) {
+        // Paso 1: Crear la entidad Order con estado inicial PENDING y monto total en cero
         Order order = Order.builder()
                 .userId(request.getUserId())
                 .shippingAddress(request.getShippingAddress())
@@ -35,6 +65,8 @@ public class OrderService {
                 .totalAmount(BigDecimal.ZERO)
                 .build();
 
+        // Paso 2: Convertir cada ítem del request en una entidad OrderItem
+        // y calcular el subtotal de cada uno (precio unitario * cantidad)
         List<OrderItem> items = request.getItems().stream()
                 .map(itemRequest -> {
                     BigDecimal subtotal = itemRequest.getUnitPrice()
@@ -45,20 +77,24 @@ public class OrderService {
                             .quantity(itemRequest.getQuantity())
                             .unitPrice(itemRequest.getUnitPrice())
                             .subtotal(subtotal)
-                            .order(order)
+                            .order(order) // Asociar cada ítem al pedido padre
                             .build();
                 })
                 .collect(Collectors.toList());
 
+        // Paso 3: Asignar la lista de ítems al pedido
         order.setItems(items);
 
+        // Paso 4: Calcular el monto total del pedido sumando los subtotales de todos los ítems
         BigDecimal totalAmount = items.stream()
                 .map(OrderItem::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         order.setTotalAmount(totalAmount);
 
-        // Reduce stock in catalog-service
+        // Paso 5: Reducir el stock en el microservicio de catálogo (catalog-service) vía Feign
         try {
+            // Construir la lista de solicitudes de reducción de stock
+            // Cada elemento contiene el ID del producto y la cantidad a descontar
             List<Map<String, Object>> stockRequests = request.getItems().stream()
                     .map(itemReq -> {
                         Map<String, Object> map = new HashMap<>();
@@ -67,17 +103,30 @@ public class OrderService {
                         return map;
                     })
                     .collect(Collectors.toList());
+            // Realizar la llamada HTTP PUT al catalog-service
             catalogClient.reduceStock(stockRequests);
             log.info("Stock reduced successfully for order with {} items", stockRequests.size());
         } catch (Exception e) {
+            // Si falla la reducción de stock, registrar el error y lanzar excepción
+            // para que la transacción haga rollback y no se guarde el pedido
             log.error("Failed to reduce stock in catalog-service: {}", e.getMessage());
             throw new RuntimeException("Could not reduce stock: " + e.getMessage(), e);
         }
 
+        // Paso 6: Guardar el pedido en la base de datos y retornar la respuesta mapeada
         Order savedOrder = orderRepository.save(order);
         return mapToResponse(savedOrder);
     }
 
+    /**
+     * Obtiene un pedido por su ID.
+     * Es una operación de solo lectura (readOnly = true), lo que optimiza el rendimiento
+     * al no necesitar bloqueos de escritura en la transacción.
+     *
+     * @param id Identificador del pedido a buscar.
+     * @return OrderResponse con los datos del pedido encontrado.
+     * @throws EntityNotFoundException si no existe un pedido con el ID proporcionado.
+     */
     @Transactional(readOnly = true)
     public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id)
@@ -85,6 +134,13 @@ public class OrderService {
         return mapToResponse(order);
     }
 
+    /**
+     * Obtiene todos los pedidos de un usuario específico.
+     * Operación de solo lectura.
+     *
+     * @param userId ID del usuario cuyos pedidos se desean consultar.
+     * @return Lista de OrderResponse con los pedidos del usuario.
+     */
     @Transactional(readOnly = true)
     public List<OrderResponse> getOrdersByUserId(String userId) {
         return orderRepository.findByUserId(userId).stream()
@@ -92,6 +148,15 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Actualiza el estado de un pedido existente.
+     * Busca el pedido por ID, cambia su estado y guarda los cambios en la BD.
+     *
+     * @param id     Identificador del pedido a actualizar.
+     * @param status Nuevo estado del pedido (CONFIRMED, PROCESSING, SHIPPED, etc.).
+     * @return OrderResponse con los datos del pedido actualizado.
+     * @throws EntityNotFoundException si no existe un pedido con el ID proporcionado.
+     */
     public OrderResponse updateOrderStatus(Long id, OrderStatus status) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id));
@@ -100,9 +165,18 @@ public class OrderService {
         return mapToResponse(updatedOrder);
     }
 
+    /**
+     * Cancela un pedido existente.
+     * Regla de negocio: No se puede cancelar un pedido que ya fue entregado (DELIVERED).
+     *
+     * @param id Identificador del pedido a cancelar.
+     * @throws EntityNotFoundException si no existe un pedido con el ID proporcionado.
+     * @throws IllegalStateException   si el pedido ya fue entregado.
+     */
     public void cancelOrder(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id));
+        // Validar regla de negocio: no se puede cancelar un pedido ya entregado
         if (order.getStatus() == OrderStatus.DELIVERED) {
             throw new IllegalStateException("Cannot cancel a delivered order");
         }
@@ -110,6 +184,13 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    /**
+     * Obtiene todos los pedidos filtrados por un estado específico.
+     * Operación de solo lectura.
+     *
+     * @param status Estado por el cual filtrar los pedidos.
+     * @return Lista de OrderResponse con los pedidos que tienen el estado indicado.
+     */
     @Transactional(readOnly = true)
     public List<OrderResponse> getOrdersByStatus(OrderStatus status) {
         return orderRepository.findByStatus(status).stream()
@@ -117,13 +198,22 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    // ---- Private mapping methods ----
+    // ---- Métodos privados de mapeo ----
 
+    /**
+     * Convierte una entidad Order a su representación DTO (OrderResponse).
+     * Mapea los datos del pedido y sus ítems para enviarlos al cliente.
+     *
+     * @param order Entidad Order obtenida de la base de datos.
+     * @return OrderResponse con los datos del pedido formateados para la respuesta HTTP.
+     */
     private OrderResponse mapToResponse(Order order) {
+        // Mapear cada ítem del pedido a su DTO de respuesta
         List<OrderItemResponse> itemResponses = order.getItems().stream()
                 .map(this::mapToItemResponse)
                 .collect(Collectors.toList());
 
+        // Construir y retornar el DTO de respuesta del pedido completo
         return OrderResponse.builder()
                 .id(order.getId())
                 .userId(order.getUserId())
@@ -136,6 +226,12 @@ public class OrderService {
                 .build();
     }
 
+    /**
+     * Convierte una entidad OrderItem a su representación DTO (OrderItemResponse).
+     *
+     * @param item Entidad OrderItem obtenida de la base de datos.
+     * @return OrderItemResponse con los datos del ítem formateados para la respuesta HTTP.
+     */
     private OrderItemResponse mapToItemResponse(OrderItem item) {
         return OrderItemResponse.builder()
                 .id(item.getId())
