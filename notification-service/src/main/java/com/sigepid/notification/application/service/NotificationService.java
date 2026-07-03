@@ -47,7 +47,7 @@ public class NotificationService {
         if (request.getUserEmail() != null && !request.getUserEmail().isEmpty()) {
             try {
                 SimpleMailMessage mailMessage = new SimpleMailMessage();
-                mailMessage.setFrom("noreply@sigepid.com");
+                mailMessage.setFrom("sanxcruro122@gmail.com");
                 mailMessage.setTo(request.getUserEmail());
                 mailMessage.setSubject("SiGePID: " + request.getTitle());
                 mailMessage.setText(request.getMessage());

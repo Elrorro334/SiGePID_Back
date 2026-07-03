@@ -5,5 +5,6 @@ public enum NotificationType {
     ORDER_STATUS_CHANGED,
     LOW_STOCK_ALERT,
     SYSTEM_ALERT,
-    WELCOME
+    WELCOME,
+    INFO
 }
