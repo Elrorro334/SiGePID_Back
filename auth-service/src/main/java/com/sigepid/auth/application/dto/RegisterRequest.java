@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -29,4 +31,8 @@ public class RegisterRequest {
 
     @Builder.Default
     private Role role = Role.USER;
+
+    private List<String> preferredCategories;
+    
+    private String ageRange;
 }

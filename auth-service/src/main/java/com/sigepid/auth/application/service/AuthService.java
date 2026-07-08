@@ -41,6 +41,8 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER) // Enforce USER role for new registrations
+                .preferredCategories(request.getPreferredCategories() != null ? request.getPreferredCategories() : new java.util.ArrayList<>())
+                .ageRange(request.getAgeRange())
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -88,6 +90,60 @@ public class AuthService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .preferredCategories(user.getPreferredCategories())
+                .ageRange(user.getAgeRange())
+                .build();
+    }
+
+    @Transactional
+    public com.sigepid.auth.application.dto.AuthProfileResponse updateEmail(Long userId, String newEmail) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+        
+        if (userRepository.existsByEmail(newEmail) && !user.getEmail().equals(newEmail)) {
+            throw new RuntimeException("Email is already in use: " + newEmail);
+        }
+
+        user.setEmail(newEmail);
+        User updatedUser = userRepository.save(user);
+
+        return com.sigepid.auth.application.dto.AuthProfileResponse.builder()
+                .id(updatedUser.getId())
+                .username(updatedUser.getUsername())
+                .email(updatedUser.getEmail())
+                .role(updatedUser.getRole())
+                .preferredCategories(updatedUser.getPreferredCategories())
+                .ageRange(updatedUser.getAgeRange())
+                .build();
+    }
+
+    public com.sigepid.auth.application.dto.UserPreferencesResponse getUserPreferences(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        return com.sigepid.auth.application.dto.UserPreferencesResponse.builder()
+                .userId(user.getId())
+                .preferredCategories(user.getPreferredCategories())
+                .ageRange(user.getAgeRange())
+                .build();
+    }
+
+    @Transactional
+    public com.sigepid.auth.application.dto.AuthProfileResponse updatePreferences(Long userId, com.sigepid.auth.application.dto.UserPreferencesRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        user.setPreferredCategories(request.getPreferredCategories());
+        user.setAgeRange(request.getAgeRange());
+        User updatedUser = userRepository.save(user);
+
+        return com.sigepid.auth.application.dto.AuthProfileResponse.builder()
+                .id(updatedUser.getId())
+                .username(updatedUser.getUsername())
+                .email(updatedUser.getEmail())
+                .role(updatedUser.getRole())
+                .preferredCategories(updatedUser.getPreferredCategories())
+                .ageRange(updatedUser.getAgeRange())
                 .build();
     }
 }

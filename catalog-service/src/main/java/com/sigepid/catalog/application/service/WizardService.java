@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * Servicio de inferencia del árbol de decisión usando ONNX Runtime.
  * El modelo clasifica una combinación (categoría, rangoEdad, usoPrevisto)
@@ -28,6 +30,9 @@ import java.util.Map;
 @Service
 @Slf4j
 public class WizardService {
+
+    @Autowired
+    private com.sigepid.catalog.infrastructure.client.AuthServiceClient authServiceClient;
 
     private OrtEnvironment ortEnv;
     private OrtSession ortSession;
@@ -164,6 +169,32 @@ public class WizardService {
             log.error("Error en inferencia ONNX: {}", e.getMessage(), e);
             throw new RuntimeException("Error al procesar la recomendación con el modelo ML", e);
         }
+    }
+
+    public com.sigepid.catalog.application.dto.PersonalizedWizardResponse predictPersonalized(Long userId, String usoPrevisto) {
+        com.sigepid.catalog.infrastructure.client.UserPreferencesResponse prefs = authServiceClient.getUserPreferences(userId);
+
+        List<WizardResponse> recommendations = new java.util.ArrayList<>();
+        if (prefs.getPreferredCategories() != null) {
+            for (String category : prefs.getPreferredCategories()) {
+                WizardRequest req = WizardRequest.builder()
+                        .categoria(category)
+                        .rangoEdad(prefs.getAgeRange())
+                        .usoPrevisto(usoPrevisto)
+                        .build();
+                try {
+                    recommendations.add(predict(req));
+                } catch (Exception e) {
+                    log.warn("No se pudo predecir para la categoria {}: {}", category, e.getMessage());
+                }
+            }
+        }
+
+        return com.sigepid.catalog.application.dto.PersonalizedWizardResponse.builder()
+                .ageRange(prefs.getAgeRange())
+                .preferredCategories(prefs.getPreferredCategories())
+                .recommendations(recommendations)
+                .build();
     }
 
     /**

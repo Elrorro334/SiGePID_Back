@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 //entidad de usuario, con atributos id, username, email, password, role, createdAt y updatedAt
 @Data
 @Builder
@@ -39,6 +41,15 @@ public class User {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_preferred_categories", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "category")
+    @Builder.Default
+    private List<String> preferredCategories = new ArrayList<>();
+
+    @Column(name = "age_range")
+    private String ageRange;
 
     @PrePersist
     protected void onCreate() {

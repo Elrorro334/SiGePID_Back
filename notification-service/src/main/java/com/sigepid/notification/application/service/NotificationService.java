@@ -69,15 +69,33 @@ public class NotificationService {
 
         if (email != null && !email.isEmpty()) {
             try {
-                SimpleMailMessage mailMessage = new SimpleMailMessage();
-                mailMessage.setFrom("sanxcruro122@gmail.com");
-                mailMessage.setTo(email);
-                mailMessage.setSubject("SiGePID: " + request.getTitle());
-                mailMessage.setText(request.getMessage());
-                mailSender.send(mailMessage);
-                log.info("Email sent to {}", email);
+                jakarta.mail.internet.MimeMessage mimeMessage = mailSender.createMimeMessage();
+                org.springframework.mail.javamail.MimeMessageHelper helper = new org.springframework.mail.javamail.MimeMessageHelper(mimeMessage, "utf-8");
+                
+                String htmlMsg = "<div style='font-family: \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff;'>"
+                        + "<div style='text-align: center; margin-bottom: 30px;'>"
+                        + "<div style='display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; background-color: #10b981; border-radius: 12px; color: white; font-size: 24px; font-weight: bold;'>S</div>"
+                        + "<h2 style='color: #10b981; margin: 15px 0 0 0; font-size: 24px;'>SiGePID</h2>"
+                        + "</div>"
+                        + "<div style='background-color: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #10b981;'>"
+                        + "<h3 style='color: #0f172a; margin-top: 0; font-size: 20px;'>" + request.getTitle() + "</h3>"
+                        + "<p style='color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 0;'>" + request.getMessage() + "</p>"
+                        + "</div>"
+                        + "<div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 13px;'>"
+                        + "<p style='margin: 0;'>Sistema de Gestión de Pedidos e Inventario Distribuido</p>"
+                        + "<p style='margin: 5px 0 0 0;'>Este es un mensaje automático, por favor no responda.</p>"
+                        + "</div>"
+                        + "</div>";
+
+                helper.setFrom("sanxcruro122@gmail.com");
+                helper.setTo(email);
+                helper.setSubject("SiGePID: " + request.getTitle());
+                helper.setText(htmlMsg, true);
+                
+                mailSender.send(mimeMessage);
+                log.info("HTML Email sent to {}", email);
             } catch (Exception e) {
-                log.error("Failed to send email to {}: {}", email, e.getMessage());
+                log.error("Failed to send HTML email to {}: {}", email, e.getMessage());
             }
         }
 

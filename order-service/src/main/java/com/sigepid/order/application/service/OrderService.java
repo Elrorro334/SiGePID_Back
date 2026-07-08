@@ -169,6 +169,19 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id));
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
+        
+        // Send notification for status update
+        try {
+            Map<String, Object> notifRequest = new HashMap<>();
+            notifRequest.put("userId", updatedOrder.getUserId());
+            notifRequest.put("title", "Actualización de Pedido");
+            notifRequest.put("message", "Su pedido ORD-" + updatedOrder.getId() + " ha cambiado su estado a: " + status.name());
+            notifRequest.put("type", "INFO");
+            notificationClient.sendNotification(notifRequest);
+        } catch (Exception e) {
+            log.error("Failed to send notification for order status update {}: {}", updatedOrder.getId(), e.getMessage());
+        }
+        
         return mapToResponse(updatedOrder);
     }
 
@@ -205,6 +218,18 @@ public class OrderService {
         } catch (Exception e) {
             log.error("Failed to restore stock in catalog-service for cancelled order: {}", e.getMessage());
             // Depending on business requirements, this might throw an exception or just log the error.
+        }
+
+        // Send notification for cancellation
+        try {
+            Map<String, Object> notifRequest = new HashMap<>();
+            notifRequest.put("userId", order.getUserId());
+            notifRequest.put("title", "Pedido Cancelado");
+            notifRequest.put("message", "Su pedido ORD-" + order.getId() + " ha sido cancelado y su dinero será reembolsado pronto.");
+            notifRequest.put("type", "WARNING");
+            notificationClient.sendNotification(notifRequest);
+        } catch (Exception e) {
+            log.error("Failed to send notification for order cancellation {}: {}", order.getId(), e.getMessage());
         }
     }
 

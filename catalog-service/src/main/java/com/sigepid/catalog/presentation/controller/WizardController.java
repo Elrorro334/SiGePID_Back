@@ -37,4 +37,22 @@ public class WizardController {
     public ResponseEntity<WizardResponse.WizardOptions> getOptions() {
         return ResponseEntity.ok(wizardService.getOptions());
     }
+
+    /**
+     * Endpoint para generar recomendaciones personalizadas utilizando las preferencias
+     * guardadas del usuario en el auth-service.
+     */
+    @GetMapping("/personalized")
+    public ResponseEntity<com.sigepid.catalog.application.dto.PersonalizedWizardResponse> predictPersonalized(
+            @org.springframework.web.bind.annotation.RequestHeader("X-User-Id") String userIdHeader,
+            @org.springframework.web.bind.annotation.RequestParam String usoPrevisto) {
+        
+        if (userIdHeader == null || userIdHeader.isEmpty()) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        Long userId = Long.parseLong(userIdHeader);
+        com.sigepid.catalog.application.dto.PersonalizedWizardResponse response = wizardService.predictPersonalized(userId, usoPrevisto);
+        return ResponseEntity.ok(response);
+    }
 }
