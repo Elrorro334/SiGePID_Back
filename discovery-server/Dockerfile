@@ -7,7 +7,12 @@ WORKDIR /app
 
 # Copia el POM raíz y el POM del módulo para aprovechar el cache de dependencias
 COPY pom.xml ./pom.xml
+COPY api-gateway/pom.xml ./api-gateway/pom.xml
+COPY auth-service/pom.xml ./auth-service/pom.xml
+COPY catalog-service/pom.xml ./catalog-service/pom.xml
 COPY discovery-server/pom.xml ./discovery-server/pom.xml
+COPY notification-service/pom.xml ./notification-service/pom.xml
+COPY order-service/pom.xml ./order-service/pom.xml
 
 # Descarga dependencias (cache layer)
 RUN mvn -B dependency:go-offline -pl discovery-server -am -q

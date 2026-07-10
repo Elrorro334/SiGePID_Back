@@ -6,7 +6,12 @@ FROM maven:3.9-eclipse-temurin-17-alpine AS builder
 WORKDIR /app
 
 COPY pom.xml ./pom.xml
+COPY api-gateway/pom.xml ./api-gateway/pom.xml
 COPY auth-service/pom.xml ./auth-service/pom.xml
+COPY catalog-service/pom.xml ./catalog-service/pom.xml
+COPY discovery-server/pom.xml ./discovery-server/pom.xml
+COPY notification-service/pom.xml ./notification-service/pom.xml
+COPY order-service/pom.xml ./order-service/pom.xml
 
 RUN mvn -B dependency:go-offline -pl auth-service -am -q
 
