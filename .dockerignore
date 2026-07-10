@@ -1,0 +1,11 @@
+# Evita subir archivos innecesarios al contexto de Docker
+**/.git
+**/.gitignore
+**/target
+**/*.log
+**/.idea
+**/*.iml
+**/.vscode
+**/node_modules
+**/.mvn/wrapper/maven-wrapper.jar
+**/start-*.bat
