@@ -23,7 +23,6 @@ public class WizardResponse {
     private String categoriaPredominante;
     private Double confianza;
 
-    // Opciones del wizard para el GET /options
     @Data
     @Builder
     @NoArgsConstructor

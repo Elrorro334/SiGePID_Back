@@ -22,11 +22,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Servicio de inferencia del árbol de decisión usando ONNX Runtime.
- * El modelo clasifica una combinación (categoría, rangoEdad, usoPrevisto)
- * y retorna el producto recomendado junto con sus estadísticas del dataset.
- */
 @Service
 @Slf4j
 public class WizardService {
@@ -37,30 +32,23 @@ public class WizardService {
     private OrtEnvironment ortEnv;
     private OrtSession ortSession;
 
-    // Mapeos de codificación cargados desde encoder_mappings.json
     private Map<String, Integer> encoderCategoria;
     private Map<String, Integer> encoderRangoEdad;
     private Map<String, Integer> encoderUsoPrevisto;
-    private Map<String, String>  encoderProducto; // índice (como string) → nombre
+    private Map<String, String>  encoderProducto;
 
-    // Estadísticas del dataset por producto
     private Map<String, Map<String, Object>> productStats;
 
-    // Opciones disponibles para el wizard
     private WizardResponse.WizardOptions wizardOptions;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // =========================================================================
-    // INICIALIZACIÓN: carga el modelo ONNX y los mapeos al arrancar el servicio
-    // =========================================================================
     @PostConstruct
     @SuppressWarnings("unchecked")
     public void init() {
         try {
             log.info("Iniciando WizardService: cargando modelo ONNX y encoders...");
 
-            // 1. Cargar modelo ONNX desde resources/ml/
             ortEnv = OrtEnvironment.getEnvironment();
             ClassPathResource modelResource = new ClassPathResource("ml/modelo_arbol_sigepid.onnx");
             byte[] modelBytes = modelResource.getInputStream().readAllBytes();
@@ -68,7 +56,6 @@ public class WizardService {
             log.info("Modelo ONNX cargado. Inputs: {}, Outputs: {}",
                     ortSession.getInputNames(), ortSession.getOutputNames());
 
-            // 2. Cargar mapeos de encoders desde resources/ml/encoder_mappings.json
             ClassPathResource mappingsResource = new ClassPathResource("ml/encoder_mappings.json");
             Map<String, Object> mappingsFile = objectMapper.readValue(
                     mappingsResource.getInputStream(),
@@ -80,12 +67,10 @@ public class WizardService {
             encoderRangoEdad   = castToStringIntMap((Map<String, Object>) encoders.get("rango_edad"));
             encoderUsoPrevisto = castToStringIntMap((Map<String, Object>) encoders.get("uso_previsto"));
 
-            // Para producto: las claves vienen como "0", "1", etc. (JSON object keys son strings)
             Map<String, Object> rawProducto = (Map<String, Object>) encoders.get("producto");
             encoderProducto = new java.util.HashMap<>();
             rawProducto.forEach((k, v) -> encoderProducto.put(k, (String) v));
 
-            // 3. Cargar opciones del wizard
             Map<String, Object> options = (Map<String, Object>) mappingsFile.get("options");
             wizardOptions = WizardResponse.WizardOptions.builder()
                     .categorias((List<String>) options.get("categorias"))
@@ -93,7 +78,6 @@ public class WizardService {
                     .usosPrevisto((List<String>) options.get("usosPrevisto"))
                     .build();
 
-            // 4. Cargar estadísticas del dataset
             ClassPathResource statsResource = new ClassPathResource("ml/product_stats.json");
             productStats = objectMapper.readValue(
                     statsResource.getInputStream(),
@@ -120,17 +104,9 @@ public class WizardService {
         }
     }
 
-    // =========================================================================
-    // PREDICCIÓN
-    // =========================================================================
-
-    /**
-     * Realiza la inferencia con el árbol de decisión y retorna el producto
-     * recomendado junto con sus estadísticas del dataset.
-     */
     public WizardResponse predict(WizardRequest request) {
         try {
-            // 1. Codificar los inputs a valores numéricos
+
             int catNum  = encodeFeature(encoderCategoria, request.getCategoria(), "categoria");
             int edadNum = encodeFeature(encoderRangoEdad, request.getRangoEdad(), "rangoEdad");
             int usoNum  = encodeFeature(encoderUsoPrevisto, request.getUsoPrevisto(), "usoPrevisto");
@@ -138,21 +114,17 @@ public class WizardService {
             log.debug("Inputs codificados → categoria:{}, rangoEdad:{}, usoPrevisto:{}",
                     catNum, edadNum, usoNum);
 
-            // 2. Crear tensor de entrada: shape [1, 3] con dtype int64
             long[][] inputData = {{catNum, edadNum, usoNum}};
             OnnxTensor inputTensor = OnnxTensor.createTensor(ortEnv, inputData);
 
-            // 3. Ejecutar inferencia
             String inputName = ortSession.getInputNames().iterator().next();
             OrtSession.Result result = ortSession.run(
                     java.util.Collections.singletonMap(inputName, inputTensor)
             );
 
-            // 4. Extraer la predicción (primera salida = etiqueta de clase)
             long[] predictions = (long[]) result.get(0).getValue();
             int prediccionNum = (int) predictions[0];
 
-            // 5. Decodificar el número al nombre del producto
             String productoRecomendado = encoderProducto.get(String.valueOf(prediccionNum));
             if (productoRecomendado == null) {
                 throw new RuntimeException("Producto no encontrado para índice: " + prediccionNum);
@@ -162,7 +134,6 @@ public class WizardService {
                     request.getCategoria(), request.getRangoEdad(),
                     request.getUsoPrevisto(), productoRecomendado, prediccionNum);
 
-            // 6. Obtener estadísticas del dataset para el producto
             return buildResponse(productoRecomendado);
 
         } catch (OrtException e) {
@@ -197,17 +168,9 @@ public class WizardService {
                 .build();
     }
 
-    /**
-     * Retorna las opciones disponibles del wizard para que el frontend
-     * pueda construir las preguntas dinámicamente.
-     */
     public WizardResponse.WizardOptions getOptions() {
         return wizardOptions;
     }
-
-    // =========================================================================
-    // MÉTODOS PRIVADOS DE APOYO
-    // =========================================================================
 
     private int encodeFeature(Map<String, Integer> encoder, String value, String featureName) {
         Integer encoded = encoder.get(value);
@@ -253,7 +216,7 @@ public class WizardService {
                 .precioMax(precioMax)
                 .stockPromedio(stockPromedio)
                 .categoriaPredominante(categoria)
-                .confianza(1.0) // El árbol de decisión determinista tiene confianza máxima
+                .confianza(1.0)
                 .build();
     }
 
