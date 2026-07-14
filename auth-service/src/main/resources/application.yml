@@ -5,9 +5,9 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/sigepid_auth
-    username: sigepid
-    password: sigepid_secret
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sigepid_auth}
+    username: ${SPRING_DATASOURCE_USERNAME:sigepid}
+    password: ${SPRING_DATASOURCE_PASSWORD:sigepid_secret}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

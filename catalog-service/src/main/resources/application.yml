@@ -6,7 +6,7 @@ spring:
     name: catalog-service
   data:
     mongodb:
-      uri: mongodb://sigepid:sigepid_secret@localhost:27017/sigepid_catalog?authSource=admin
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://sigepid:sigepid_secret@localhost:27017/sigepid_catalog?authSource=admin}
 
 eureka:
   client:
