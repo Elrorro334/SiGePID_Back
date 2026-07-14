@@ -50,6 +50,6 @@ echo "Todos los microservicios fueron lanzados."
 echo "API Gateway escuchando en puerto: $RAILWAY_PORT"
 echo "======================================================="
 
-# Mantener el contenedor vivo. Si cualquier proceso hijo muere,
-# el script termina y Railway reiniciara el contenedor.
-wait -n
+# Mantener el contenedor vivo. Si un servicio falla (ej. Mongo),
+# los demas (como el API Gateway) seguiran funcionando y no se caera todo el servidor.
+wait
