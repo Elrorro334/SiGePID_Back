@@ -3,53 +3,57 @@ echo "======================================================="
 echo "Iniciando Sistema SiGePID_Back en Railway (Todo en uno)"
 echo "======================================================="
 
-# Railway inyecta la variable PORT (usualmente 8080)
-# Se lo asignamos al API Gateway que es el unico que recibe trafico externo.
+# Railway inyecta la variable PORT.
+# Solo el API Gateway debe usar este puerto.
 RAILWAY_PORT=${PORT:-8080}
 
 # -------------------------------------------------------
-# Limitar la memoria de cada JVM para que no se coman todo.
-# Con 3 GB de RAM total, le damos ~400 MB a cada uno (6 servicios).
+# Limitar la memoria de cada JVM.
 # -------------------------------------------------------
 JVM_OPTS="-Xms128m -Xmx400m"
 
+# -------------------------------------------------------
+# PASO 1: Iniciar PRIMERO el API Gateway en el puerto de Railway.
+# Esto asegura que Railway detecte el puerto correcto.
+# Ya no depende de Eureka (usa URLs directas a localhost).
+# -------------------------------------------------------
 echo ""
-echo "1. Iniciando Discovery Server (Eureka) en puerto 8761..."
-java $JVM_OPTS -jar discovery-server.jar --server.port=8761 &
-DISCOVERY_PID=$!
+echo "1. Iniciando API Gateway (puerto $RAILWAY_PORT)..."
+java $JVM_OPTS -jar api-gateway.jar --server.port=$RAILWAY_PORT &
+GATEWAY_PID=$!
 
-echo "   Esperando a que Eureka inicialice (20s)..."
-sleep 20
+# Darle tiempo al Gateway para arrancar
+sleep 5
 
+# -------------------------------------------------------
+# PASO 2: Iniciar los microservicios en sus puertos fijos.
+# El Gateway los encuentra directamente por localhost.
+# -------------------------------------------------------
 echo ""
 echo "2. Iniciando microservicios..."
 
-# API Gateway - usa el puerto que Railway espera
-echo "   -> API Gateway (puerto $RAILWAY_PORT)"
-java $JVM_OPTS -jar api-gateway.jar --server.port=$RAILWAY_PORT &
-
-# Auth Service
 echo "   -> Auth Service (puerto 8081)"
-java $JVM_OPTS -jar auth-service.jar --server.port=8081 &
+java $JVM_OPTS -jar auth-service.jar --server.port=8081 --eureka.client.enabled=false &
 
-# Catalog Service
 echo "   -> Catalog Service (puerto 8082)"
-java $JVM_OPTS -jar catalog-service.jar --server.port=8082 &
+java $JVM_OPTS -jar catalog-service.jar --server.port=8082 --eureka.client.enabled=false &
 
-# Order Service
 echo "   -> Order Service (puerto 8083)"
-java $JVM_OPTS -jar order-service.jar --server.port=8083 &
+java $JVM_OPTS -jar order-service.jar --server.port=8083 --eureka.client.enabled=false &
 
-# Notification Service
 echo "   -> Notification Service (puerto 8084)"
-java $JVM_OPTS -jar notification-service.jar --server.port=8084 &
+java $JVM_OPTS -jar notification-service.jar --server.port=8084 --eureka.client.enabled=false &
 
 echo ""
 echo "======================================================="
 echo "Todos los microservicios fueron lanzados."
 echo "API Gateway escuchando en puerto: $RAILWAY_PORT"
 echo "======================================================="
+echo ""
+echo "NOTA: El Discovery Server (Eureka) NO se inicia."
+echo "En Railway todos los servicios estan en el mismo"
+echo "contenedor, asi que el Gateway usa URLs directas."
+echo "======================================================="
 
-# Mantener el contenedor vivo. Si un servicio falla (ej. Mongo),
-# los demas (como el API Gateway) seguiran funcionando y no se caera todo el servidor.
+# Mantener el contenedor vivo
 wait
