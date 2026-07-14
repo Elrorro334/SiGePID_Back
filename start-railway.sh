@@ -29,20 +29,23 @@ sleep 15
 echo ""
 echo "2. Iniciando microservicios..."
 
-echo "   -> Auth Service (puerto 8081)"
-java $JVM_OPTS -jar auth-service.jar --server.port=8081 $EUREKA_OFF &
-sleep 10
+# Temporarily disable these services to fit within Railway's 500MB free tier RAM limit.
+# Solo dejaremos Gateway y Catalog para que el frontend funcione.
+
+# echo "   -> Auth Service (puerto 8081)"
+# java $JVM_OPTS -jar auth-service.jar --server.port=8081 $EUREKA_OFF &
+# sleep 10
 
 echo "   -> Catalog Service (puerto 8082)"
 java $JVM_OPTS -jar catalog-service.jar --server.port=8082 $EUREKA_OFF &
 sleep 10
 
-echo "   -> Order Service (puerto 8083)"
-java $JVM_OPTS -jar order-service.jar --server.port=8083 $EUREKA_OFF &
-sleep 10
+# echo "   -> Order Service (puerto 8083)"
+# java $JVM_OPTS -jar order-service.jar --server.port=8083 $EUREKA_OFF &
+# sleep 10
 
-echo "   -> Notification Service (puerto 8084)"
-java $JVM_OPTS -jar notification-service.jar --server.port=8084 $EUREKA_OFF &
+# echo "   -> Notification Service (puerto 8084)"
+# java $JVM_OPTS -jar notification-service.jar --server.port=8084 $EUREKA_OFF &
 
 echo ""
 echo "======================================================="
