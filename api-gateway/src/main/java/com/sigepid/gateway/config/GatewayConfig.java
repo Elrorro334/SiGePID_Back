@@ -31,6 +31,7 @@ public class GatewayConfig {
         // Allowed origins
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
+                "https://si-ge-pid-front.vercel.app",
                 corsAllowedOrigin
         ));
 

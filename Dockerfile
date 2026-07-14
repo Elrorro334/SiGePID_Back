@@ -31,7 +31,8 @@ COPY start-railway.sh start.sh
 RUN chmod +x start.sh
 
 # The PORT environment variable is automatically provided by Railway
-EXPOSE 8080 8081 8082 8083 8084 8761
+# Expose only the Gateway port so Railway knows where to route traffic
+EXPOSE 8080
 
 # Run the startup script
 ENTRYPOINT ["./start.sh"]
