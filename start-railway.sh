@@ -7,8 +7,8 @@ echo "======================================================="
 # Solo el API Gateway debe usar este puerto.
 RAILWAY_PORT=${PORT:-8080}
 
-# Limitar la memoria de cada JVM al MÍNIMO ABSOLUTO para evitar OOM (Out Of Memory) en Railway
-JVM_OPTS="-Xms32m -Xmx64m -Xss256k -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC"
+# Limitar la memoria de cada JVM drasticamente para evitar OOM (Out Of Memory)
+JVM_OPTS="-Xms64m -Xmx128m -Xss512k"
 
 # Argumentos para desactivar Eureka
 EUREKA_OFF="--eureka.client.register-with-eureka=false --eureka.client.fetch-registry=false"
@@ -29,23 +29,20 @@ sleep 15
 echo ""
 echo "2. Iniciando microservicios..."
 
-# Temporarily disable these services to fit within Railway's 500MB free tier RAM limit.
-# Solo dejaremos Gateway y Catalog para que el frontend funcione.
-
-# echo "   -> Auth Service (puerto 8081)"
-# java $JVM_OPTS -jar auth-service.jar --server.port=8081 $EUREKA_OFF &
-# sleep 10
+echo "   -> Auth Service (puerto 8081)"
+java $JVM_OPTS -jar auth-service.jar --server.port=8081 $EUREKA_OFF &
+sleep 10
 
 echo "   -> Catalog Service (puerto 8082)"
 java $JVM_OPTS -jar catalog-service.jar --server.port=8082 $EUREKA_OFF &
 sleep 10
 
-# echo "   -> Order Service (puerto 8083)"
-# java $JVM_OPTS -jar order-service.jar --server.port=8083 $EUREKA_OFF &
-# sleep 10
+echo "   -> Order Service (puerto 8083)"
+java $JVM_OPTS -jar order-service.jar --server.port=8083 $EUREKA_OFF &
+sleep 10
 
-# echo "   -> Notification Service (puerto 8084)"
-# java $JVM_OPTS -jar notification-service.jar --server.port=8084 $EUREKA_OFF &
+echo "   -> Notification Service (puerto 8084)"
+java $JVM_OPTS -jar notification-service.jar --server.port=8084 $EUREKA_OFF &
 
 echo ""
 echo "======================================================="
