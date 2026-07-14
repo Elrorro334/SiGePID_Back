@@ -7,8 +7,8 @@ echo "======================================================="
 # Solo el API Gateway debe usar este puerto.
 RAILWAY_PORT=${PORT:-8080}
 
-# Limitar la memoria de cada JVM drasticamente para evitar OOM (Out Of Memory)
-JVM_OPTS="-Xms64m -Xmx128m -Xss512k"
+# Limitar la memoria de cada JVM al MÍNIMO ABSOLUTO para evitar OOM (Out Of Memory) en Railway
+JVM_OPTS="-Xms32m -Xmx64m -Xss256k -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC"
 
 # Argumentos para desactivar Eureka
 EUREKA_OFF="--eureka.client.register-with-eureka=false --eureka.client.fetch-registry=false"
