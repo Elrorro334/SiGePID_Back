@@ -31,7 +31,8 @@ spring:
 
 eureka:
   client:
-    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
 
 jwt:
   secret: SiGePID_SuperSecretKey_ChangeInProduction_2024
