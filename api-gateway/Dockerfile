@@ -1,23 +1,41 @@
-# Build stage
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+# ──────────────────────────────────────────────
+# Stage 1: Build
+# ──────────────────────────────────────────────
+FROM maven:3.9.9-eclipse-temurin-17-alpine AS builder
+
 WORKDIR /app
 
-# Copy root pom and all modules
-COPY ../pom.xml ./pom.xml
-COPY ../ /app
+# POM raíz + módulo para cache de dependencias
+COPY pom.xml ./pom.xml
+COPY api-gateway/pom.xml ./api-gateway/pom.xml
+COPY auth-service/pom.xml ./auth-service/pom.xml
+COPY catalog-service/pom.xml ./catalog-service/pom.xml
+COPY discovery-server/pom.xml ./discovery-server/pom.xml
+COPY notification-service/pom.xml ./notification-service/pom.xml
+COPY order-service/pom.xml ./order-service/pom.xml
 
-# Build api-gateway
-RUN mvn clean package -DskipTests -pl api-gateway -am
+RUN mvn -B dependency:go-offline -pl api-gateway -am -q
 
-# Run stage
-FROM eclipse-temurin:17-jre-jammy
+COPY api-gateway/src ./api-gateway/src
+
+RUN mvn -B package -pl api-gateway -am -DskipTests -q
+
+# ──────────────────────────────────────────────
+# Stage 2: Runtime
+# ──────────────────────────────────────────────
+FROM eclipse-temurin:17-jre-alpine AS runtime
+
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring
+
 WORKDIR /app
 
-# Copy the built jar
-COPY --from=build /app/api-gateway/target/*.jar api-gateway.jar
+COPY --from=builder /app/api-gateway/target/*.jar app.jar
 
-# Railway inyecta PORT automáticamente
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-Xms256m", "-Xmx512m", "-jar", "api-gateway.jar", "--server.port=${PORT:-8080}", "--server.address=0.0.0.0"]
+ENV SERVER_PORT=8080
 
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", \
+            "-Dserver.port=${SERVER_PORT}", \
+            "-jar", "app.jar"]

@@ -1,5 +1,5 @@
 [build]
-dockerfilePath = "discovery-server/Dockerfile"
+dockerfilePath = "order-service/Dockerfile"
 
 [deploy]
 healthcheckPath = "/actuator/health"
