@@ -20,11 +20,11 @@ COPY catalog-service/src ./catalog-service/src
 RUN mvn -B package -pl catalog-service -am -DskipTests -q
 
 # ──────────────────────────────────────────────
-# Stage 2: Runtime
+# Stage 2: Runtime (Jammy — ONNX Runtime needs glibc + libstdc++)
 # ──────────────────────────────────────────────
-FROM eclipse-temurin:17-jre-alpine AS runtime
+FROM eclipse-temurin:17-jre-jammy AS runtime
 
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN groupadd -r spring && useradd -r -g spring spring
 USER spring
 
 WORKDIR /app
@@ -38,3 +38,4 @@ ENV SERVER_PORT=8082
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", \
             "-Dserver.port=${SERVER_PORT}", \
             "-jar", "app.jar"]
+
